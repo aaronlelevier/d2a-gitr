@@ -1,4 +1,4 @@
-// Gitr is for Github API calls
+// Gitr is for Github API calls without using go-github
 package main
 
 import (
@@ -17,24 +17,31 @@ func main() {
 
 	log.Println("token exists:", 0 <= len(_token))
 
+	// list contents of a repo
 	contents := GetContents()
 
+	// check contents
 	for idx, ci := range contents {
 		log.Println(idx, ci.Path, ci.GitUrl)
 
+		// filter on a file
 		if ci.Path == "README.md" {
+
+			// fetch file's contents
 			content := GetContent(ci.GitUrl)
 			log.Println(idx, "GetContent")
 			log.Println(content.Content)
 
+			// decode file content
 			encoded := content.Content
 			decoded, err := base64.StdEncoding.DecodeString(encoded)
 			if err != nil {
 				fmt.Println("decode error:", err)
 				return
 			}
-			fmt.Println(string(decoded))
 
+			// output file content
+			fmt.Println(string(decoded))
 		}
 	}
 
@@ -85,14 +92,6 @@ func GetRepo() Repo {
 	return repo
 }
 
-// check
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 // structs
 
 // ContentSingle .
@@ -112,4 +111,12 @@ type Repos struct {
 
 type Repo struct {
 	Id int `json:"id"`
+}
+
+// check
+
+func check(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
